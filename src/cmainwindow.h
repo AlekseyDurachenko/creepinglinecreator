@@ -37,6 +37,9 @@ private slots:
     void on_action_textSave_triggered();
     void on_action_textSaveAs_triggered();
     void on_plainTextEdit_text_textChanged();
+    void on_tabWidget_currentChanged(int index);
+    void on_pushButton_screenBackgroundColor_clicked();
+    void on_pushButton_screenTextColor_clicked();
 protected:
     void closeEvent(QCloseEvent *closeEvent);
 private:
@@ -50,6 +53,8 @@ private:
     QLabel *m_imageLabel;
     QString m_lastTextFileName;
     QString m_lastText;
+    QColor m_screenBackgroundColor;
+    QColor m_screenTextColor;
 };
 
 #endif // CMAINWINDOW_H

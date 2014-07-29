@@ -195,14 +195,14 @@
                  </widget>
                 </item>
                 <item row="2" column="1">
-                 <widget class="QPushButton" name="pushButton_screenColor">
+                 <widget class="QPushButton" name="pushButton_screenBackgroundColor">
                   <property name="text">
                    <string/>
                   </property>
                  </widget>
                 </item>
                 <item row="2" column="0">
-                 <widget class="QLabel" name="label_screenColor">
+                 <widget class="QLabel" name="label_screenBackgroundColor">
                   <property name="text">
                    <string>Color</string>
                   </property>
@@ -320,14 +320,14 @@
                  </widget>
                 </item>
                 <item row="2" column="0">
-                 <widget class="QLabel" name="label_textColor">
+                 <widget class="QLabel" name="label_screenTextColor">
                   <property name="text">
                    <string>Color</string>
                   </property>
                  </widget>
                 </item>
                 <item row="2" column="1">
-                 <widget class="QPushButton" name="pushButton_textColor">
+                 <widget class="QPushButton" name="pushButton_screenTextColor">
                   <property name="text">
                    <string/>
                   </property>
@@ -464,6 +464,29 @@
               <width>80</width>
               <height>0</height>
              </size>
+            </property>
+            <property name="maximum">
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_frameNumberOf">
+            <property name="text">
+             <string>of</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox_frameCount">
+            <property name="minimumSize">
+             <size>
+              <width>80</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
             </property>
             <property name="maximum">
              <number>0</number>
@@ -617,13 +640,13 @@
   <tabstop>scrollArea_image</tabstop>
   <tabstop>spinBox_screenWidth</tabstop>
   <tabstop>spinBox_screenHeight</tabstop>
-  <tabstop>pushButton_screenColor</tabstop>
+  <tabstop>pushButton_screenBackgroundColor</tabstop>
   <tabstop>spinBox_spaceLeft</tabstop>
   <tabstop>spinBox_spaceRight</tabstop>
   <tabstop>spinBox_spaceBottom</tabstop>
   <tabstop>fontComboBox_textFont</tabstop>
   <tabstop>spinBox_textPixelSize</tabstop>
-  <tabstop>pushButton_textColor</tabstop>
+  <tabstop>pushButton_screenTextColor</tabstop>
   <tabstop>comboBox</tabstop>
   <tabstop>spinBox</tabstop>
   <tabstop>checkBox</tabstop>
