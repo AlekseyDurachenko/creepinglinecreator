@@ -33,6 +33,18 @@ CMainWindow::CMainWindow(QWidget *parent) :
     ui->toolButton_textSave->setDefaultAction(ui->action_textSave);
     ui->toolButton_textSaveAs->setDefaultAction(ui->action_textSaveAs);
 
+    m_imageLabel = new QLabel;
+    m_imageLabel->setBackgroundRole(QPalette::Dark);
+    m_imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    m_imageLabel->setScaledContents(true);
+    ui->scrollArea_image->setBackgroundRole(QPalette::Dark);
+    ui->scrollArea_image->setWidget(m_imageLabel);
+
+// this is example of the resize
+//    m_imageLabel->setPixmap(QPixmap::fromImage(QImage(100, 300, QImage::Format_RGB32)));
+//    ui->scrollArea_image->setWidgetResizable(false);
+//    m_imageLabel->adjustSize();
+
     loadSettings();
 }
 

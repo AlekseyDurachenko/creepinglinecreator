@@ -53,16 +53,16 @@ INCLUDEPATH    +=                                           \
 HEADERS        +=                                           \
     src/global.h                                            \
     src/consts.h                                            \
-    src/cmainwindow.h \
-    src/caboutdialog.h
+    src/cmainwindow.h                                       \
+    src/caboutdialog.h                                      \
 
 SOURCES        +=                                           \
-    src/cmainwindow.cpp \
-    src/caboutdialog.cpp
+    src/cmainwindow.cpp                                     \
+    src/caboutdialog.cpp                                    \
 
 FORMS          +=                                           \
-    src/cmainwindow.ui \
-    src/caboutdialog.ui
+    src/cmainwindow.ui                                      \
+    src/caboutdialog.ui                                     \
 
 RESOURCES      +=                                           \
     qrc/icons.qrc                                           \

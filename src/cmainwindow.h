@@ -16,6 +16,7 @@
 #define CMAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
 
 namespace Ui {
 class CMainWindow;
@@ -46,6 +47,7 @@ private:
     void openTextFile(const QString &fileName);
 private:
     Ui::CMainWindow *ui;
+    QLabel *m_imageLabel;
     QString m_lastTextFileName;
     QString m_lastText;
 };
