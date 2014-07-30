@@ -15,6 +15,7 @@
 #ifndef CMAINWINDOW_H
 #define CMAINWINDOW_H
 
+#include "crenderrequest.h"
 #include <QMainWindow>
 #include <QLabel>
 
@@ -40,12 +41,17 @@ private slots:
     void on_tabWidget_currentChanged(int index);
     void on_pushButton_screenBackgroundColor_clicked();
     void on_pushButton_screenTextColor_clicked();
+    void updateTabScreen();
+    void updateTabScreenWithFrameCount();
 protected:
     void closeEvent(QCloseEvent *closeEvent);
 private:
     void loadSettings();
     void saveSettings();
     bool textChanged();
+    int calcFrameCount();
+    QStringList toLineList();
+    CRenderRequest toRenderRequest();
     void updateTextActions();
     void openTextFile(const QString &fileName);
 private:

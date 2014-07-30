@@ -15,7 +15,9 @@
 #include "cmainwindow.h"
 #include "ui_cmainwindow.h"
 #include "global.h"
+#include "imagerender.h"
 #include "caboutdialog.h"
+#include <QtCore/qmath.h>
 #include <QSettings>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -41,10 +43,38 @@ CMainWindow::CMainWindow(QWidget *parent) :
     ui->scrollArea_image->setBackgroundRole(QPalette::Dark);
     ui->scrollArea_image->setWidget(m_imageLabel);
 
-// this is example of the resize
-//    m_imageLabel->setPixmap(QPixmap::fromImage(QImage(100, 300, QImage::Format_RGB32)));
-//    ui->scrollArea_image->setWidgetResizable(false);
-//    m_imageLabel->adjustSize();
+    connect(ui->spinBox_screenWidth, SIGNAL(valueChanged(int)),
+            this, SLOT(updateTabScreen()));
+    connect(ui->spinBox_screenHeight, SIGNAL(valueChanged(int)),
+            this, SLOT(updateTabScreen()));
+    connect(ui->spinBox_spaceLeft, SIGNAL(valueChanged(int)),
+            this, SLOT(updateTabScreen()));
+    connect(ui->spinBox_spaceRight, SIGNAL(valueChanged(int)),
+            this, SLOT(updateTabScreen()));
+    connect(ui->spinBox_spaceBottom, SIGNAL(valueChanged(int)),
+            this, SLOT(updateTabScreen()));
+    connect(ui->checkBox_showGuideLine, SIGNAL(stateChanged(int)),
+            this, SLOT(updateTabScreen()));
+    connect(ui->horizontalSlider_currentFrame, SIGNAL(valueChanged(int)),
+            this, SLOT(updateTabScreen()));
+    connect(ui->fontComboBox_screenTextFont, SIGNAL(currentFontChanged(QFont)),
+            this, SLOT(updateTabScreenWithFrameCount()));
+    connect(ui->spinBox_screenTextPixelSize, SIGNAL(valueChanged(int)),
+            this, SLOT(updateTabScreenWithFrameCount()));
+    connect(ui->checkBox_screenTextBold, SIGNAL(stateChanged(int)),
+            this, SLOT(updateTabScreenWithFrameCount()));
+    connect(ui->checkBox_screenTextItalic, SIGNAL(stateChanged(int)),
+            this, SLOT(updateTabScreenWithFrameCount()));
+    connect(ui->comboBox_framesPerSecond, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(updateTabScreenWithFrameCount()));
+    connect(ui->spinBox_pixelsPerSecond, SIGNAL(valueChanged(int)),
+            this, SLOT(updateTabScreenWithFrameCount()));
+    connect(ui->spinBox_repeatCount, SIGNAL(valueChanged(int)),
+            this, SLOT(updateTabScreenWithFrameCount()));
+    connect(ui->spinBox_pixelsBetweenLines, SIGNAL(valueChanged(int)),
+            this, SLOT(updateTabScreenWithFrameCount()));
+    connect(ui->spinBox_pixelsBetweenRepeats, SIGNAL(valueChanged(int)),
+            this, SLOT(updateTabScreenWithFrameCount()));
 
     loadSettings();
 }
@@ -85,6 +115,102 @@ void CMainWindow::saveSettings()
 bool CMainWindow::textChanged()
 {
     return (ui->plainTextEdit_text->toPlainText() != m_lastText);
+}
+
+int CMainWindow::calcFrameCount()
+{
+    // 1. calculate the line count
+    QStringList lines = toLineList();
+    // 2. calculate total pixel count
+    int textWidth = 0;
+    QFont font = ui->fontComboBox_screenTextFont->currentFont();
+    font.setPixelSize(ui->spinBox_screenTextPixelSize->value());
+    font.setBold(ui->checkBox_screenTextBold->isChecked());
+    font.setItalic(ui->checkBox_screenTextItalic->isChecked());
+    for (int i = 0; i < lines.count(); ++i)
+    {
+        textWidth += QFontMetrics(font).width(lines.at(i));
+        if (i < lines.count()-1)
+        {
+            textWidth += ui->spinBox_pixelsBetweenLines->value();
+        }
+    }
+    textWidth *= ui->spinBox_repeatCount->value();
+    if (textWidth > 0)
+    {
+        textWidth += ui->spinBox_pixelsBetweenRepeats->value() * (ui->spinBox_repeatCount->value() - 1);
+    }
+    // 3. calculate the frame count
+    double pps = ui->spinBox_pixelsPerSecond->value();
+    double fps = ui->comboBox_framesPerSecond->currentText().toDouble();
+    return qCeil((textWidth / pps) * fps);
+}
+
+QStringList CMainWindow::toLineList()
+{
+    QString rawText = ui->plainTextEdit_text->toPlainText();
+    QStringList lines = rawText.split("\n");
+    for (int i = lines.count()-1; i >= 0; --i)
+    {
+        lines[i] = lines.at(i).trimmed();
+        if (lines.at(i).isEmpty())
+        {
+            lines.removeAt(i);
+        }
+    }
+
+    return lines;
+}
+
+CRenderRequest CMainWindow::toRenderRequest()
+{
+    CRenderRequest request;
+    request.setLines(toLineList());
+    request.setScreenWidth(ui->spinBox_screenWidth->value());
+    request.setScreenHeight(ui->spinBox_screenHeight->value());
+    request.setScreenBackgroudColor(m_screenBackgroundColor);
+    request.setSpaceLeft(ui->spinBox_spaceLeft->value());
+    request.setSpaceRight(ui->spinBox_spaceRight->value());
+    request.setSpaceBottom(ui->spinBox_spaceBottom->value());
+    QFont font = ui->fontComboBox_screenTextFont->currentFont();
+    font.setPixelSize(ui->spinBox_screenTextPixelSize->value());
+    font.setBold(ui->checkBox_screenTextBold->isChecked());
+    font.setItalic(ui->checkBox_screenTextItalic->isChecked());
+    request.setScreenTextFont(font);
+    request.setScreenTextColor(m_screenTextColor);
+    request.setFramesPerSecond(ui->comboBox_framesPerSecond->currentText().toDouble());
+    request.setPixelsPerSecond(ui->spinBox_pixelsPerSecond->value());
+    request.setRepeatCount(ui->spinBox_repeatCount->value());
+    request.setPixelsBetweenLines(ui->spinBox_pixelsBetweenLines->value());
+    request.setPixelsBetweenRepeats(ui->spinBox_pixelsBetweenRepeats->value());
+    request.setShowGuideLines(ui->checkBox_showGuideLine->isChecked());
+    request.setCurrentFrame(ui->horizontalSlider_currentFrame->value());
+
+    return request;
+}
+
+void CMainWindow::updateTabScreen()
+{
+    m_imageLabel->setPixmap
+            (QPixmap::fromImage(imageFromRequest(toRenderRequest())));
+    ui->scrollArea_image->setWidgetResizable(false);
+    m_imageLabel->adjustSize();
+}
+
+void CMainWindow::updateTabScreenWithFrameCount()
+{
+    // recalculate the frame count and current frame position
+    int frameCount = calcFrameCount();
+    frameCount = (frameCount == 0) ? (0) : (frameCount-1);
+    ui->horizontalSlider_currentFrame->blockSignals(true); // hack
+    ui->spinBox_currentFrame->setMaximum(frameCount);
+    ui->horizontalSlider_currentFrame->setMaximum(frameCount);
+    ui->spinBox_frameCount->setMaximum(frameCount);
+    ui->spinBox_frameCount->setValue(frameCount);
+    ui->horizontalSlider_currentFrame->blockSignals(false); // hack
+    // hack - for exclude the double render query
+
+    updateTabScreen();
 }
 
 void CMainWindow::updateTextActions()
@@ -245,7 +371,10 @@ void CMainWindow::on_plainTextEdit_text_textChanged()
 
 void CMainWindow::on_tabWidget_currentChanged(int index)
 {
-    // TODO: update the screen
+    if (index == 1) // user switched to the screen tab
+    {
+        updateTabScreenWithFrameCount();
+    }
 }
 
 void CMainWindow::on_pushButton_screenBackgroundColor_clicked()
@@ -258,6 +387,8 @@ void CMainWindow::on_pushButton_screenBackgroundColor_clicked()
         QPalette pal(palette());
         pal.setColor(QPalette::Button, m_screenBackgroundColor);
         ui->pushButton_screenBackgroundColor->setPalette(pal);
+
+        updateTabScreen();
     }
 }
 
@@ -271,5 +402,7 @@ void CMainWindow::on_pushButton_screenTextColor_clicked()
         QPalette pal(palette());
         pal.setColor(QPalette::Button, m_screenTextColor);
         ui->pushButton_screenTextColor->setPalette(pal);
+
+        updateTabScreen();
     }
 }

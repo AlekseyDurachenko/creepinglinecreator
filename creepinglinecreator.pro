@@ -55,10 +55,14 @@ HEADERS        +=                                           \
     src/consts.h                                            \
     src/cmainwindow.h                                       \
     src/caboutdialog.h                                      \
+    src/crenderrequest.h \
+    src/imagerender.h
 
 SOURCES        +=                                           \
     src/cmainwindow.cpp                                     \
     src/caboutdialog.cpp                                    \
+    src/crenderrequest.cpp \
+    src/imagerender.cpp
 
 FORMS          +=                                           \
     src/cmainwindow.ui                                      \

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1043</width>
-    <height>682</height>
+    <width>1072</width>
+    <height>769</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabText">
        <attribute name="title">
@@ -123,8 +123,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>721</width>
-               <height>544</height>
+               <width>752</width>
+               <height>633</height>
               </rect>
              </property>
             </widget>
@@ -284,14 +284,14 @@
                </property>
                <layout class="QGridLayout" name="gridLayout">
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label_textFont">
+                 <widget class="QLabel" name="label_screenTextFont">
                   <property name="text">
                    <string>Font</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
-                 <widget class="QLabel" name="label_textPixelSize">
+                 <widget class="QLabel" name="label_screenTextPixelSize">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -304,10 +304,10 @@
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QFontComboBox" name="fontComboBox_textFont"/>
+                 <widget class="QFontComboBox" name="fontComboBox_screenTextFont"/>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QSpinBox" name="spinBox_textPixelSize">
+                 <widget class="QSpinBox" name="spinBox_screenTextPixelSize">
                   <property name="minimum">
                    <number>8</number>
                   </property>
@@ -319,17 +319,42 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
+                <item row="4" column="0">
                  <widget class="QLabel" name="label_screenTextColor">
                   <property name="text">
                    <string>Color</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="4" column="1">
                  <widget class="QPushButton" name="pushButton_screenTextColor">
                   <property name="text">
                    <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QCheckBox" name="checkBox_screenTextBold">
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Bold</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QCheckBox" name="checkBox_screenTextItalic">
+                  <property name="font">
+                   <font>
+                    <italic>true</italic>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Italic</string>
                   </property>
                  </widget>
                 </item>
@@ -338,8 +363,8 @@
              </item>
              <item>
               <layout class="QGridLayout" name="gridLayout_4">
-               <item row="1" column="1">
-                <widget class="QSpinBox" name="spinBox">
+               <item row="2" column="1">
+                <widget class="QSpinBox" name="spinBox_repeatCount">
                  <property name="minimum">
                   <number>1</number>
                  </property>
@@ -348,28 +373,55 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_pixelsBetweenLines">
                  <property name="text">
-                  <string>Frame per second</string>
+                  <string>Pixels between lines</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_2">
+               <item row="4" column="1">
+                <widget class="QSpinBox" name="spinBox_pixelsBetweenRepeats">
+                 <property name="minimum">
+                  <number>0</number>
+                 </property>
+                 <property name="maximum">
+                  <number>9999</number>
+                 </property>
+                 <property name="value">
+                  <number>1024</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="label_pixelsBetweenRepeats">
+                 <property name="text">
+                  <string>Pixels between repeats</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QSpinBox" name="spinBox_pixelsBetweenLines">
+                 <property name="minimum">
+                  <number>0</number>
+                 </property>
+                 <property name="maximum">
+                  <number>9999</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_repeatCount">
                  <property name="text">
                   <string>Repeat count</string>
                  </property>
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QComboBox" name="comboBox">
+                <widget class="QComboBox" name="comboBox_framesPerSecond">
                  <item>
                   <property name="text">
                    <string>24</string>
@@ -402,10 +454,49 @@
                  </item>
                 </widget>
                </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_framesPerSecond">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Frames per second</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_pixelsPerSecond">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Pixels per second</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="spinBox_pixelsPerSecond">
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>9999</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </item>
              <item>
-              <widget class="QCheckBox" name="checkBox">
+              <widget class="QCheckBox" name="checkBox_showGuideLine">
                <property name="text">
                 <string>Show guide lines (only in the preview)</string>
                </property>
@@ -434,12 +525,12 @@
           <item>
            <widget class="QLabel" name="label_frameNumber">
             <property name="text">
-             <string>Frame:</string>
+             <string>Frame</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QSlider" name="horizontalSlider_frameNumber">
+           <widget class="QSlider" name="horizontalSlider_currentFrame">
             <property name="maximum">
              <number>0</number>
             </property>
@@ -458,7 +549,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="spinBox_frameNumber">
+           <widget class="QSpinBox" name="spinBox_currentFrame">
             <property name="minimumSize">
              <size>
               <width>80</width>
@@ -511,8 +602,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1043</width>
-     <height>20</height>
+     <width>1072</width>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -644,17 +735,50 @@
   <tabstop>spinBox_spaceLeft</tabstop>
   <tabstop>spinBox_spaceRight</tabstop>
   <tabstop>spinBox_spaceBottom</tabstop>
-  <tabstop>fontComboBox_textFont</tabstop>
-  <tabstop>spinBox_textPixelSize</tabstop>
+  <tabstop>fontComboBox_screenTextFont</tabstop>
+  <tabstop>spinBox_screenTextPixelSize</tabstop>
   <tabstop>pushButton_screenTextColor</tabstop>
-  <tabstop>comboBox</tabstop>
-  <tabstop>spinBox</tabstop>
-  <tabstop>checkBox</tabstop>
-  <tabstop>horizontalSlider_frameNumber</tabstop>
-  <tabstop>spinBox_frameNumber</tabstop>
+  <tabstop>comboBox_framesPerSecond</tabstop>
+  <tabstop>spinBox_repeatCount</tabstop>
+  <tabstop>checkBox_showGuideLine</tabstop>
+  <tabstop>horizontalSlider_currentFrame</tabstop>
+  <tabstop>spinBox_currentFrame</tabstop>
  </tabstops>
  <resources>
   <include location="../qrc/icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>spinBox_currentFrame</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider_currentFrame</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>896</x>
+     <y>667</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>817</x>
+     <y>664</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_currentFrame</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_currentFrame</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>769</x>
+     <y>667</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>894</x>
+     <y>666</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
