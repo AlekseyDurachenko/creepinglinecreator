@@ -23,6 +23,7 @@
 #include <QFileDialog>
 #include <QColorDialog>
 #include <QCloseEvent>
+#include <QProcess>
 #include <QDebug>
 
 CMainWindow::CMainWindow(QWidget *parent) :
@@ -404,5 +405,46 @@ void CMainWindow::on_pushButton_screenTextColor_clicked()
         ui->pushButton_screenTextColor->setPalette(pal);
 
         updateTabScreen();
+    }
+}
+
+void CMainWindow::on_toolButton_setRenderOutput_clicked()
+{
+    G_SETTINGS_INIT();
+
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Output video"),
+        settings.value("LastDirectory").toString(), tr("Video (* *.*)"));
+
+    if (fileName.isEmpty())
+    {
+        return;
+    }
+
+    ui->lineEdit_renderOutput->setText(fileName);
+}
+
+void CMainWindow::on_pushButton_render_clicked()
+{
+    CRenderRequest request = toRenderRequest();
+    for (int i = 0; i < calcFrameCount(); ++i)
+    {
+        request.setCurrentFrame(i);
+        QImage image = imageFromRequest(request);
+        QString fileName = ui->lineEdit_renderOutput->text() + QString("_%1").arg(i, 10, 10, QChar('0')) + ".png";
+        qDebug() << fileName;
+        qDebug() << image.save(fileName, "PNG");
+
+    }
+    QStringList args;
+    args << "-framerate" << ui->comboBox_framesPerSecond->currentText() << "-i" << ui->lineEdit_renderOutput->text() + "_%10d.png"
+         << "-vcodec" << "libx264" << ui->lineEdit_renderOutput->text() + ".mp4";
+
+    QProcess process(this);
+    qDebug() << process.execute("avconv", args);
+
+    for (int i = 0; i < calcFrameCount(); ++i)
+    {
+        QString fileName = ui->lineEdit_renderOutput->text() + QString("_%1").arg(i, 10, 10, QChar('0')) + ".png";
+        QFile::remove(fileName);
     }
 }

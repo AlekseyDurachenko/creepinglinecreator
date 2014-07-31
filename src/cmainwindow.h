@@ -43,6 +43,10 @@ private slots:
     void on_pushButton_screenTextColor_clicked();
     void updateTabScreen();
     void updateTabScreenWithFrameCount();
+    void on_toolButton_setRenderOutput_clicked();
+
+    void on_pushButton_render_clicked();
+
 protected:
     void closeEvent(QCloseEvent *closeEvent);
 private:
