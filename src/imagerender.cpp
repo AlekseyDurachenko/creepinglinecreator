@@ -13,7 +13,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "imagerender.h"
+#include "utils.h"
 #include <QPainter>
+#include <QDebug>
 
 QImage imageFromRequest(const CRenderRequest &request)
 {
@@ -36,17 +38,17 @@ QImage imageFromRequest(const CRenderRequest &request)
     int firstPixel = ppf * request.currentFrame();
     // find && draw the visible lines
     int offset = -firstPixel;
-    for (int repeat = 0; repeat < request.repeatCount(); ++repeat)
+    for (int repeat = 0; repeat < request.repeatCount() && offset < request.screenWidth(); ++repeat)
     {
-        for (int line = 0; line < request.lines().count(); ++line)
+        for (int line = 0; line < request.lines().count() && offset < request.screenWidth(); ++line)
         {
             QString text = request.lines().at(line);
-            // TODO: optimize me! (we should draw only visible text)
-            if (true)
+            int len = QFontMetrics(request.screenTextFont()).width(text);
+            if (isInterset(0, request.screenWidth(), offset, offset+len))
             {
                 textPainter.drawText(offset, fontAscent, text);
             }
-            offset += QFontMetrics(request.screenTextFont()).width(text);
+            offset += len;
             offset += request.pixelsBetweenLines();
         }
         offset += request.pixelsBetweenRepeats();
