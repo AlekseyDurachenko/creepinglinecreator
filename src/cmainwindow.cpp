@@ -24,6 +24,7 @@
 #include <QColorDialog>
 #include <QCloseEvent>
 #include <QProcess>
+#include <QTimer>
 #include <QDebug>
 
 CMainWindow::CMainWindow(QWidget *parent) :
@@ -43,6 +44,9 @@ CMainWindow::CMainWindow(QWidget *parent) :
     m_imageLabel->setScaledContents(true);
     ui->scrollArea_image->setBackgroundRole(QPalette::Dark);
     ui->scrollArea_image->setWidget(m_imageLabel);
+
+    m_testTimer = new QTimer(this);
+    connect(m_testTimer, SIGNAL(timeout()), this, SLOT(testTimerTimeout()));
 
     connect(ui->spinBox_screenWidth, SIGNAL(valueChanged(int)),
             this, SLOT(updateTabScreen()));
@@ -113,7 +117,7 @@ void CMainWindow::saveSettings()
     settings.setValue("ScreenTextColor", m_screenTextColor.name());
 }
 
-bool CMainWindow::textChanged()
+bool CMainWindow::isTextChanged()
 {
     return (ui->plainTextEdit_text->toPlainText() != m_lastText);
 }
@@ -210,6 +214,8 @@ void CMainWindow::updateTabScreenWithFrameCount()
     ui->spinBox_frameCount->setValue(frameCount);
     ui->horizontalSlider_currentFrame->blockSignals(false); // hack
     // hack - for exclude the double render query
+    m_testTimer->setInterval
+            (1000.0 / ui->comboBox_framesPerSecond->currentText().toDouble());
 
     updateTabScreen();
 }
@@ -217,7 +223,7 @@ void CMainWindow::updateTabScreenWithFrameCount()
 void CMainWindow::updateTextActions()
 {
     ui->action_textSave->setEnabled
-            (m_lastTextFileName.isEmpty() || textChanged());
+            (m_lastTextFileName.isEmpty() || isTextChanged());
 }
 
 void CMainWindow::openTextFile(const QString &fileName)
@@ -447,4 +453,27 @@ void CMainWindow::on_pushButton_render_clicked()
         QString fileName = ui->lineEdit_renderOutput->text() + QString("_%1").arg(i, 10, 10, QChar('0')) + ".png";
         QFile::remove(fileName);
     }
+}
+
+void CMainWindow::on_pushButton_testStartStop_clicked()
+{
+    if (m_testTimer->isActive())
+    {
+        m_testTimer->stop();
+        ui->pushButton_testStartStop->setText(tr("Start test"));
+    }
+    else
+    {
+        m_testTimer->start();
+        ui->pushButton_testStartStop->setText(tr("Stop test"));
+    }
+}
+
+void CMainWindow::testTimerTimeout()
+{
+    if (ui->spinBox_currentFrame->value() == ui->spinBox_frameCount->value())
+    {
+        ui->spinBox_currentFrame->setValue(0);
+    }
+    ui->spinBox_currentFrame->setValue(ui->spinBox_currentFrame->value() + 1);
 }

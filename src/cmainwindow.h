@@ -44,15 +44,15 @@ private slots:
     void updateTabScreen();
     void updateTabScreenWithFrameCount();
     void on_toolButton_setRenderOutput_clicked();
-
     void on_pushButton_render_clicked();
-
+    void on_pushButton_testStartStop_clicked();
+    void testTimerTimeout();
 protected:
     void closeEvent(QCloseEvent *closeEvent);
 private:
     void loadSettings();
     void saveSettings();
-    bool textChanged();
+    bool isTextChanged();
     int calcFrameCount();
     QStringList toLineList();
     CRenderRequest toRenderRequest();
@@ -61,6 +61,7 @@ private:
 private:
     Ui::CMainWindow *ui;
     QLabel *m_imageLabel;
+    QTimer *m_testTimer;
     QString m_lastTextFileName;
     QString m_lastText;
     QColor m_screenBackgroundColor;

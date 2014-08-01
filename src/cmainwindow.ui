@@ -22,7 +22,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabText">
        <attribute name="title">
@@ -581,6 +581,13 @@
             </property>
             <property name="maximum">
              <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_testStartStop">
+            <property name="text">
+             <string>Start test</string>
             </property>
            </widget>
           </item>
