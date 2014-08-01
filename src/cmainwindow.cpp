@@ -23,6 +23,7 @@
 #include <QFileDialog>
 #include <QColorDialog>
 #include <QCloseEvent>
+#include <QScrollBar>
 #include <QProcess>
 #include <QTimer>
 #include <QDebug>
@@ -37,6 +38,8 @@ CMainWindow::CMainWindow(QWidget *parent) :
     ui->toolButton_textOpen->setDefaultAction(ui->action_textOpen);
     ui->toolButton_textSave->setDefaultAction(ui->action_textSave);
     ui->toolButton_textSaveAs->setDefaultAction(ui->action_textSaveAs);
+    ui->toolButton_logClear->setDefaultAction(ui->action_logClear);
+    ui->toolButton_logSaveAs->setDefaultAction(ui->action_logSaveAs);
 
     m_imageLabel = new QLabel;
     m_imageLabel->setBackgroundRole(QPalette::Dark);
@@ -382,6 +385,14 @@ void CMainWindow::on_tabWidget_currentChanged(int index)
     {
         updateTabScreenWithFrameCount();
     }
+    else if (index == 2) // render tab
+    {
+        QString text;
+        text += QString(" -framerate %1").arg(ui->comboBox_framesPerSecond->currentText());
+        text += " -start_number 0";
+        text += QString(" -vframes %1").arg(ui->spinBox_frameCount->value()+1);
+        ui->lineEdit_renderAvconvArgs->setText(text);
+    }
 }
 
 void CMainWindow::on_pushButton_screenBackgroundColor_clicked()
@@ -418,41 +429,73 @@ void CMainWindow::on_toolButton_setRenderOutput_clicked()
 {
     G_SETTINGS_INIT();
 
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Output video"),
-        settings.value("LastDirectory").toString(), tr("Video (* *.*)"));
+    QString dirName = QFileDialog::getExistingDirectory(this, tr("Select dir"),
+            QFileInfo(settings.value("LastDirectory").toString()).absolutePath(),
+            QFileDialog::ShowDirsOnly|QFileDialog::DontResolveSymlinks);
 
-    if (fileName.isEmpty())
+    if (dirName.isEmpty())
     {
         return;
     }
 
-    ui->lineEdit_renderOutput->setText(fileName);
+    ui->lineEdit_renderOutput->setText(dirName);
+    settings.setValue("LastDirectory", dirName);
 }
 
 void CMainWindow::on_pushButton_render_clicked()
 {
+    int frameCount = calcFrameCount();
     CRenderRequest request = toRenderRequest();
+    request.setShowGuideLines(false);
+
+    ui->progressBar_render->setMaximum(frameCount + frameCount + 1);
+    ui->progressBar_render->setValue(0);
+
     for (int i = 0; i < calcFrameCount(); ++i)
     {
+        QString fileName = ui->lineEdit_renderOutput->text() + QDir::separator()
+                + QString("video_%1").arg(i, 10, 10, QChar('0')) + ".png";
+        ui->plainTextEdit_log->insertPlainText(tr("Creating frame: ") + fileName + "\n");
+        ui->plainTextEdit_log->verticalScrollBar()->setValue(ui->plainTextEdit_log->verticalScrollBar()->maximum());
+        ui->progressBar_render->setValue(i);
+        qApp->processEvents();
         request.setCurrentFrame(i);
-        QImage image = imageFromRequest(request);
-        QString fileName = ui->lineEdit_renderOutput->text() + QString("_%1").arg(i, 10, 10, QChar('0')) + ".png";
-        qDebug() << fileName;
-        qDebug() << image.save(fileName, "PNG");
+        QImage image = imageFromRequest(request);        
+        image.save(fileName, "PNG");
 
     }
+    ui->plainTextEdit_log->insertPlainText(tr("Converting...") + "\n");
+    ui->plainTextEdit_log->verticalScrollBar()->setValue(ui->plainTextEdit_log->verticalScrollBar()->maximum());
+    qApp->processEvents();
+
     QStringList args;
-    args << "-framerate" << ui->comboBox_framesPerSecond->currentText() << "-i" << ui->lineEdit_renderOutput->text() + "_%10d.png"
-         << "-vcodec" << "libx264" << ui->lineEdit_renderOutput->text() + ".mp4";
+    args << "-framerate" << ui->comboBox_framesPerSecond->currentText();
+    args << "-i" << ui->lineEdit_renderOutput->text() + QDir::separator() + "video_%10d.png";
+    //text += " -start_number 0";
+    //text += QString(" -vframes %1").arg(ui->spinBox_frameCount->value()+1);
+    args += ui->lineEdit_renderAvconvArgsUser->text().split(" ");
+    args.push_back(ui->lineEdit_renderOutput->text() + QDir::separator() + ui->lineEdit_renderFileName->text());
 
     QProcess process(this);
-    qDebug() << process.execute("avconv", args);
+    qDebug() << "-------";
+    qDebug() << "parguments: " << args.join(" ");
+    qDebug() << "process state: " << process.execute("avconv", args);
+
+    ui->progressBar_render->setValue(frameCount + frameCount);
+    qApp->processEvents();
 
     for (int i = 0; i < calcFrameCount(); ++i)
     {
-        QString fileName = ui->lineEdit_renderOutput->text() + QString("_%1").arg(i, 10, 10, QChar('0')) + ".png";
+        QString fileName = ui->lineEdit_renderOutput->text() + QDir::separator()
+                + QString("video_%1").arg(i, 10, 10, QChar('0')) + ".png";
+        //ui->plainTextEdit_log->insertPlainText(tr("Removing frame: ") + fileName + "\n");
+        //ui->plainTextEdit_log->verticalScrollBar()->setValue(ui->plainTextEdit_log->verticalScrollBar()->maximum());
+        qApp->processEvents();
         QFile::remove(fileName);
     }
+    ui->plainTextEdit_log->insertPlainText(tr("Done!") + "\n");
+    ui->plainTextEdit_log->verticalScrollBar()->setValue(ui->plainTextEdit_log->verticalScrollBar()->maximum());
+    ui->progressBar_render->setValue(frameCount + frameCount + 1);
 }
 
 void CMainWindow::on_pushButton_testStartStop_clicked()
@@ -476,4 +519,43 @@ void CMainWindow::testTimerTimeout()
         ui->spinBox_currentFrame->setValue(0);
     }
     ui->spinBox_currentFrame->setValue(ui->spinBox_currentFrame->value() + 1);
+}
+
+void CMainWindow::on_toolButton_logClear_clicked()
+{
+    if (QMessageBox::question(this, tr("Clear log"),
+            tr("Clear the log. Are you sure?"),
+            QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
+    {
+        ui->plainTextEdit_log->clear();
+    }
+}
+
+void CMainWindow::on_toolButton_logSaveAs_clicked()
+{
+    G_SETTINGS_INIT();
+
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save log"),
+        settings.value("LastDirectory").toString(), tr("Texts (*.txt)"));
+
+    if (fileName.isEmpty())
+    {
+        return;
+    }
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        QMessageBox::critical(this, tr("Critical"), file.errorString());
+        return;
+    }
+
+    QByteArray ba = ui->plainTextEdit_text->toPlainText().toUtf8();
+    if (file.write(ba) != ba.size())
+    {
+        QMessageBox::critical(this, tr("Critical"), file.errorString());
+        return;
+    }
+
+    settings.setValue("LastDirectory", QFileInfo(fileName).absolutePath());
 }

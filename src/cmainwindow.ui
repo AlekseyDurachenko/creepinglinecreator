@@ -22,7 +22,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabText">
        <attribute name="title">
@@ -123,8 +123,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>750</width>
-               <height>631</height>
+               <width>752</width>
+               <height>628</height>
               </rect>
              </property>
             </widget>
@@ -602,7 +602,7 @@
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
          <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="2">
+          <item row="0" column="3">
            <widget class="QToolButton" name="toolButton_setRenderOutput">
             <property name="text">
              <string>...</string>
@@ -612,7 +612,14 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_renderOutput">
             <property name="text">
-             <string>Output</string>
+             <string>Output directory</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEdit_renderFileName">
+            <property name="text">
+             <string/>
             </property>
            </widget>
           </item>
@@ -623,25 +630,107 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_renderFileName">
+            <property name="text">
+             <string>Filename</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_renderAvconvArgs">
+            <property name="text">
+             <string>AVconv arguments</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QLineEdit" name="lineEdit_renderAvconvArgs">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_renderAvconvArgsUser">
+              <property name="text">
+               <string>-vcodec libx264</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
          </layout>
         </item>
         <item>
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QPlainTextEdit" name="plainTextEdit_log">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QToolButton" name="toolButton_logClear">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="toolButton_logSaveAs">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
-           <widget class="QProgressBar" name="progressBar_complite">
+           <widget class="QProgressBar" name="progressBar_render">
             <property name="value">
              <number>0</number>
             </property>
@@ -668,7 +757,7 @@
      <x>0</x>
      <y>0</y>
      <width>1072</width>
-     <height>20</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -785,6 +874,30 @@
     <string>Save text as</string>
    </property>
   </action>
+  <action name="action_logClear">
+   <property name="icon">
+    <iconset resource="../qrc/icons.qrc">
+     <normaloff>:/icons/file-new.png</normaloff>:/icons/file-new.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear log...</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear log</string>
+   </property>
+  </action>
+  <action name="action_logSaveAs">
+   <property name="icon">
+    <iconset resource="../qrc/icons.qrc">
+     <normaloff>:/icons/file-save-as.png</normaloff>:/icons/file-save-as.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save log as...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save log as</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
@@ -802,12 +915,28 @@
   <tabstop>spinBox_spaceBottom</tabstop>
   <tabstop>fontComboBox_screenTextFont</tabstop>
   <tabstop>spinBox_screenTextPixelSize</tabstop>
+  <tabstop>checkBox_screenTextBold</tabstop>
+  <tabstop>checkBox_screenTextItalic</tabstop>
   <tabstop>pushButton_screenTextColor</tabstop>
   <tabstop>comboBox_framesPerSecond</tabstop>
+  <tabstop>spinBox_pixelsPerSecond</tabstop>
   <tabstop>spinBox_repeatCount</tabstop>
+  <tabstop>spinBox_pixelsBetweenLines</tabstop>
+  <tabstop>spinBox_pixelsBetweenRepeats</tabstop>
   <tabstop>checkBox_showGuideLine</tabstop>
   <tabstop>horizontalSlider_currentFrame</tabstop>
   <tabstop>spinBox_currentFrame</tabstop>
+  <tabstop>spinBox_frameCount</tabstop>
+  <tabstop>pushButton_testStartStop</tabstop>
+  <tabstop>lineEdit_renderOutput</tabstop>
+  <tabstop>toolButton_setRenderOutput</tabstop>
+  <tabstop>lineEdit_renderFileName</tabstop>
+  <tabstop>lineEdit_renderAvconvArgs</tabstop>
+  <tabstop>lineEdit_renderAvconvArgsUser</tabstop>
+  <tabstop>plainTextEdit_log</tabstop>
+  <tabstop>toolButton_logClear</tabstop>
+  <tabstop>toolButton_logSaveAs</tabstop>
+  <tabstop>pushButton_render</tabstop>
  </tabstops>
  <resources>
   <include location="../qrc/icons.qrc"/>

@@ -47,6 +47,10 @@ private slots:
     void on_pushButton_render_clicked();
     void on_pushButton_testStartStop_clicked();
     void testTimerTimeout();
+    void on_toolButton_logClear_clicked();
+
+    void on_toolButton_logSaveAs_clicked();
+
 protected:
     void closeEvent(QCloseEvent *closeEvent);
 private:
