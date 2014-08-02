@@ -98,9 +98,34 @@ void CMainWindow::loadSettings()
 {
     G_SETTINGS_INIT();
     restoreGeometry(settings.value("CMainWindow/geometry", geometry()).toByteArray());
-    restoreState(settings.value("CMainWindow/state", saveState()).toByteArray());
-    m_screenBackgroundColor = settings.value("ScreenBackgroundColor", QColor(Qt::black).name()).toString();
-    m_screenTextColor = settings.value("ScreenTextColor", QColor(Qt::green).name()).toString();
+    restoreState(settings.value("CMainWindow/state", saveState()).toByteArray());    
+
+    ui->spinBox_screenWidth->setValue(settings.value("CMainWindow/Screen/width", 800).toInt());
+    ui->spinBox_screenHeight->setValue(settings.value("CMainWindow/Screen/height", 600).toInt());
+    m_screenBackgroundColor = settings.value("CMainWindow/Screen/backgroundColor", QColor(Qt::black).name()).toString();
+
+    ui->spinBox_spaceLeft->setValue(settings.value("CMainWindow/Screen/spacingLeft", 10).toInt());
+    ui->spinBox_spaceRight->setValue(settings.value("CMainWindow/Screen/spacingRight", 10).toInt());
+    ui->spinBox_spaceBottom->setValue(settings.value("CMainWindow/Screen/spacingBottom", 10).toInt());
+
+    ui->fontComboBox_screenTextFont->setCurrentFont(qvariant_cast<QFont>(settings.value("CMainWindow/Screen/textFont", QFont())));
+    ui->spinBox_screenTextPixelSize->setValue(settings.value("CMainWindow/Screen/textPixelSize", 20).toInt());
+    ui->checkBox_screenTextBold->setChecked(settings.value("CMainWindow/Screen/textBold", false).toBool());
+    ui->checkBox_screenTextItalic->setChecked(settings.value("CMainWindow/Screen/textItalic", false).toBool());
+    m_screenTextColor = settings.value("CMainWindow/Screen/textColor", QColor(Qt::green).name()).toString();
+
+    ui->comboBox_framesPerSecond->setCurrentIndex
+            (ui->comboBox_framesPerSecond->findText
+                (settings.value("CMainWindow/Screen/framePerSecond", "60").toString()));
+    ui->spinBox_pixelsPerSecond->setValue(settings.value("CMainWindow/Screen/pixelPerSecond", 150).toInt());
+    ui->spinBox_repeatCount->setValue(settings.value("CMainWindow/Screen/repeatCount", 1).toInt());
+    ui->spinBox_pixelsBetweenLines->setValue(settings.value("CMainWindow/Screen/pixelsBetweenLines", 300).toInt());
+    ui->spinBox_pixelsBetweenRepeats->setValue(settings.value("CMainWindow/Screen/pixelsBetweenRepeats", 800).toInt());
+    ui->checkBox_showGuideLine->setChecked(settings.value("CMainWindow/Screen/showGuideLines", false).toBool());
+
+    ui->lineEdit_renderOutput->setText(settings.value("CMainWindow/Render/outputDirectory", "").toString());
+    ui->lineEdit_renderFileName->setText(settings.value("CMainWindow/Render/fileName", "").toString());
+    ui->lineEdit_renderAvconvArgsUser->setText(settings.value("CMainWindow/Render/avconvArgsUser", "").toString());
 
     QPalette pal(palette());
     pal.setColor(QPalette::Button, m_screenBackgroundColor);
@@ -116,8 +141,31 @@ void CMainWindow::saveSettings()
     G_SETTINGS_INIT();
     settings.setValue("CMainWindow/geometry", saveGeometry());
     settings.setValue("CMainWindow/state", saveState());
-    settings.setValue("ScreenBackgroundColor", m_screenBackgroundColor.name());
-    settings.setValue("ScreenTextColor", m_screenTextColor.name());
+
+    settings.setValue("CMainWindow/Screen/width", ui->spinBox_screenWidth->value());
+    settings.setValue("CMainWindow/Screen/height", ui->spinBox_screenHeight->value());
+    settings.setValue("CMainWindow/Screen/backgroundColor", m_screenBackgroundColor.name());
+
+    settings.setValue("CMainWindow/Screen/spacingLeft", ui->spinBox_spaceLeft->value());
+    settings.setValue("CMainWindow/Screen/spacingRight", ui->spinBox_spaceRight->value());
+    settings.setValue("CMainWindow/Screen/spacingBottom", ui->spinBox_spaceBottom->value());
+
+    settings.setValue("CMainWindow/Screen/textFont", ui->fontComboBox_screenTextFont->currentFont());
+    settings.setValue("CMainWindow/Screen/textPixelSize", ui->spinBox_screenTextPixelSize->value());
+    settings.setValue("CMainWindow/Screen/textBold", ui->checkBox_screenTextBold->isChecked());
+    settings.setValue("CMainWindow/Screen/textItalic", ui->checkBox_screenTextItalic->isChecked());
+    settings.setValue("CMainWindow/Screen/textColor", m_screenTextColor.name());
+
+    settings.setValue("CMainWindow/Screen/framePerSecond", ui->comboBox_framesPerSecond->currentText());
+    settings.setValue("CMainWindow/Screen/pixelPerSecond", ui->spinBox_pixelsPerSecond->value());
+    settings.setValue("CMainWindow/Screen/repeatCount", ui->spinBox_repeatCount->value());
+    settings.setValue("CMainWindow/Screen/pixelsBetweenLines", ui->spinBox_pixelsBetweenLines->value());
+    settings.setValue("CMainWindow/Screen/pixelsBetweenRepeats", ui->spinBox_pixelsBetweenRepeats->value());
+    settings.setValue("CMainWindow/Screen/showGuideLines", ui->checkBox_showGuideLine->isChecked());
+
+    settings.setValue("CMainWindow/Render/outputDirectory", ui->lineEdit_renderOutput->text());
+    settings.setValue("CMainWindow/Render/fileName", ui->lineEdit_renderFileName->text());
+    settings.setValue("CMainWindow/Render/avconvArgsUser", ui->lineEdit_renderAvconvArgsUser->text());
 }
 
 bool CMainWindow::isTextChanged()
@@ -450,13 +498,14 @@ void CMainWindow::on_pushButton_render_clicked()
 
     ui->progressBar_render->setMaximum(frameCount + frameCount + 1);
     ui->progressBar_render->setValue(0);
+    ui->plainTextEdit_log->insertPlainText(tr("Creating frames"));
 
     for (int i = 0; i < calcFrameCount(); ++i)
     {
         QString fileName = ui->lineEdit_renderOutput->text() + QDir::separator()
                 + QString("video_%1").arg(i, 10, 10, QChar('0')) + ".png";
-        ui->plainTextEdit_log->insertPlainText(tr("Creating frame: ") + fileName + "\n");
-        ui->plainTextEdit_log->verticalScrollBar()->setValue(ui->plainTextEdit_log->verticalScrollBar()->maximum());
+        //ui->plainTextEdit_log->insertPlainText(tr("Creating frame: ") + fileName + "\n");
+        //ui->plainTextEdit_log->verticalScrollBar()->setValue(ui->plainTextEdit_log->verticalScrollBar()->maximum());
         ui->progressBar_render->setValue(i);
         qApp->processEvents();
         request.setCurrentFrame(i);
@@ -474,6 +523,7 @@ void CMainWindow::on_pushButton_render_clicked()
     //text += " -start_number 0";
     //text += QString(" -vframes %1").arg(ui->spinBox_frameCount->value()+1);
     args += ui->lineEdit_renderAvconvArgsUser->text().split(" ");
+    args << "-y";
     args.push_back(ui->lineEdit_renderOutput->text() + QDir::separator() + ui->lineEdit_renderFileName->text());
 
     QProcess process(this);

@@ -49,7 +49,10 @@ QImage imageFromRequest(const CRenderRequest &request)
                 textPainter.drawText(offset, fontAscent, text);
             }
             offset += len;
-            offset += request.pixelsBetweenLines();
+            if (line != request.lines().count()-1)
+            {
+                offset += request.pixelsBetweenLines();
+            }
         }
         offset += request.pixelsBetweenRepeats();
     }
